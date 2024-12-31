@@ -343,4 +343,4 @@ def generate_image(form_data, cube_side_length):
 
     d.save_svg(f"{rx.get_upload_dir()}/{filename}.svg")
 
-    return filename
+    return d, filename

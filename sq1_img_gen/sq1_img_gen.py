@@ -36,13 +36,16 @@ class FormState(rx.State):
 
     def handle_submit(self, form_data: dict):
         self.form_data = form_data
-        self.img = generate_image(form_data, 100)
+        self.png_data, self.img = generate_image(form_data, 100)
         self.png = self.img  + ".png"
     
     def handle_change(self, field_id: str, value: str):
         self.form_data[field_id] = value
         self.handle_submit(self.form_data)
 
+def get_png(state):
+    state.png_data.save_png(f"{rx.get_upload_dir()}/{state.png}")
+    rx.download(url=rx.get_upload_url(state.png))
 
 @rx.page(title="Seby's Square-1 Image Generator")
 def index():
@@ -193,7 +196,7 @@ def index():
                 rx.heading("Output", margin_top=0),
                 rx.image(src=rx.get_upload_url(FormState.img + ".svg")),
                 rx.button(rx.icon("refresh-ccw"), "Reload Image", on_click=FormState.handle_submit(FormState.form_data), margin_top="20px", size="3"),
-                rx.button(rx.icon("image-down"), "Export to .png", on_click=rx.download(url=rx.get_upload_url(FormState.png)), margin_top="20px", size="3"),
+                rx.button(rx.icon("image-down"), "Export to .png", on_click=get_png(FormState), margin_top="20px", size="3"),
 
                 margin_top=0
             ),
